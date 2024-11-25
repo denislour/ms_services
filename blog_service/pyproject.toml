@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "blog-service"
+version = "0.1.0"
+description = "A flexible blog service with hexagonal architecture"
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.104.1"
+uvicorn = "^0.24.0"
+sqlmodel = "^0.0.11"
+motor = "^3.3.1"
+sanic = "^23.6.0"
+pydantic = "^2.4.2"
+python-dotenv = "^1.0.0"
+alembic = "^1.12.1"
+typer = {extras = ["all"], version = "^0.9.0"}
+psycopg2-binary = "^2.9.9"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4.3"
+black = "^23.10.1"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+
+[tool.poetry.scripts]
+blog = "blog_service.main:app"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
