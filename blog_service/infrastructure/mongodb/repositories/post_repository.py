@@ -2,9 +2,10 @@ from typing import List, Optional
 from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorCollection
 from domain.entities.post import Post
+from application.ports.repositories.post_repository import PostRepository
 from ..models.post import PostDocument
 
-class MongoPostRepository:
+class MongoPostRepository(PostRepository):
     def __init__(self, collection: AsyncIOMotorCollection):
         self.collection = collection
 
@@ -29,6 +30,16 @@ class MongoPostRepository:
         await self.collection.delete_one({"_id": str(post_id)})
 
     async def list(self) -> List[Post]:
-        cursor = self.collection.find()
+        cursor = self.collection.find({})
+        docs = await cursor.to_list(length=None)
+        return [PostDocument.from_document(doc) for doc in docs]
+
+    async def get_by_author(self, author: str) -> List[Post]:
+        cursor = self.collection.find({"author": author})
+        docs = await cursor.to_list(length=None)
+        return [PostDocument.from_document(doc) for doc in docs]
+
+    async def get_by_status(self, status: str) -> List[Post]:
+        cursor = self.collection.find({"status": status})
         docs = await cursor.to_list(length=None)
         return [PostDocument.from_document(doc) for doc in docs]

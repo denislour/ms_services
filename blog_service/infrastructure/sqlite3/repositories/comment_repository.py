@@ -2,10 +2,11 @@ from typing import List
 from uuid import UUID
 from sqlmodel import select
 from domain.entities.comment import Comment
+from application.ports.repositories.comment_repository import CommentRepository
 from infrastructure.sqlite3.models.comment import CommentModel
 from infrastructure.sqlite3.session import Session
 
-class SQLiteCommentRepository:
+class SQLiteCommentRepository(CommentRepository):
     def __init__(self, session: Session):
         self.session = session
 
@@ -32,7 +33,9 @@ class SQLiteCommentRepository:
         result = await self.session.execute(stmt)
         comment_model = result.scalar_one_or_none()
         if comment_model:
-            comment_model.update_from_entity(comment)
+            comment_model.content = comment.content
+            comment_model.author = comment.author
+            comment_model.updated_at = comment.updated_at
             await self.session.flush()
             return comment_model.to_entity()
         return None
@@ -52,3 +55,9 @@ class SQLiteCommentRepository:
         for comment_model in comment_models:
             await self.session.delete(comment_model)
         await self.session.flush()
+
+    async def list(self) -> List[Comment]:
+        stmt = select(CommentModel)
+        result = await self.session.execute(stmt)
+        comment_models = result.scalars().all()
+        return [cm.to_entity() for cm in comment_models]

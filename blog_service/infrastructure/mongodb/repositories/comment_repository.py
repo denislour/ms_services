@@ -2,9 +2,10 @@ from typing import List, Optional
 from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorCollection
 from domain.entities.comment import Comment
+from application.ports.repositories.comment_repository import CommentRepository
 from ..models.comment import CommentDocument
 
-class MongoCommentRepository:
+class MongoCommentRepository(CommentRepository):
     def __init__(self, collection: AsyncIOMotorCollection):
         self.collection = collection
 
